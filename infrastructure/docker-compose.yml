@@ -1,0 +1,14 @@
+services:
+  streaming-pipeline:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile
+    environment:
+      APP_NAME: fiap-streaming-produtos
+      INPUT_PATH: /app/data/input
+      OUTPUT_PATH: /app/data/output/parquet
+      CHECKPOINT_PATH: /app/data/checkpoints/produtos_aggregation
+      WINDOW_DURATION: 1 minute
+      MAX_FILES_PER_TRIGGER: 1
+    volumes:
+      - ../data:/app/data
