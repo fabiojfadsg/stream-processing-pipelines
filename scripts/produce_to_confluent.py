@@ -102,7 +102,9 @@ def main() -> None:
             "nome": "Produto com preço inválido",
             "preco": "-1.00",
             "quantidade": 1,
-            "event_time": int((base_time + timedelta(minutes=5)).timestamp() * 1000),
+            # Além de demonstrar a quarentena, este evento posterior faz o
+            # Watermark ultrapassar o fim da última janela dos 50 produtos.
+            "event_time": int((base_time + timedelta(minutes=6)).timestamp() * 1000),
         })
 
     for event in events:

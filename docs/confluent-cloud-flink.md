@@ -99,7 +99,8 @@ Preencha `.env` com os endpoints e as credenciais exibidos no Confluent Cloud. N
 python scripts/produce_to_confluent.py
 ```
 
-Para demonstrar também a quarentena:
+Para a apresentação ao professor, use a opção abaixo. Além de demonstrar a
+quarentena, o evento inválido posterior faz o Watermark fechar a última janela:
 
 ```bash
 python scripts/produce_to_confluent.py --include-invalid
