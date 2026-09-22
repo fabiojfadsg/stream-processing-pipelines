@@ -29,6 +29,7 @@ Dataset JSON → INSERT Flink SQL → Kafka: produtos_raw (JSON Schema)
 ├── docs/
 │   └── confluent-cloud-flink.md
 ├── flink/               # scripts Flink SQL para o Confluent Cloud
+├── EXECUCAO_COMPLETA_CONFLUENT.md  # todos os comandos em um único arquivo
 └── README.md
 ```
 
@@ -40,6 +41,8 @@ Dataset JSON → INSERT Flink SQL → Kafka: produtos_raw (JSON Schema)
 4. Mantenha os jobs `02` e `03` em execução, rode a carga `04` e visualize `05`.
 
 O roteiro completo, incluindo as telas do Confluent Cloud e a ordem exata das células SQL, está em [docs/confluent-cloud-flink.md](docs/confluent-cloud-flink.md).
+
+Para executar sem precisar abrir vários arquivos, use [execucao-completa.md]. Ele contém todos os comandos SQL já organizados na sequência correta e separados por célula.
 
 ## Dataset
 

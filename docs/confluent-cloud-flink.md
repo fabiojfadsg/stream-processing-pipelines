@@ -12,10 +12,10 @@ Construir um pipeline de streaming gerenciado que publique o dataset de produtos
 
 O pipeline atende aos bônus do enunciado:
 
-1. validação e filtro com Schema Registry e `TRY_CAST`;
-2. agregação de quantidade e valor de estoque;
-3. janela fixa (`TUMBLE`) de um minuto com Watermark;
-4. execução dos jobs no Confluent Cloud for Apache Flink.
+1. Validação e filtro com Schema Registry e `TRY_CAST`;
+2. Agregação de quantidade e valor de estoque;
+3. Janela fixa (`TUMBLE`) de um minuto com Watermark;
+4. Execução dos jobs no Confluent Cloud for Apache Flink.
 
 ---
 
@@ -23,9 +23,9 @@ O pipeline atende aos bônus do enunciado:
 
 ```text
 Lab 02 - Dataset.json
-         ↓ INSERT Flink SQL
+      ↓ INSERT Flink SQL
 produtos_raw (Kafka + JSON Schema)
-         ↓ Flink SQL
+      ↓ Flink SQL
    validação / tipagem
       ↙            ↘
 produtos_invalidos  TUMBLE de 1 minuto
@@ -40,15 +40,15 @@ O dataset original não possui data de evento. O script de carga acrescenta `eve
 
 ## Pré-requisitos
 
-- conta no Confluent Cloud;
-- um Environment com Schema Registry habilitado;
-- um cluster Kafka em região compatível com Flink;
-- um Flink Compute Pool na mesma região do cluster;
-- acesso ao SQL Workspace usado na apresentação.
+- Conta no Confluent Cloud;
+- Um Environment com Schema Registry habilitado;
+- Um cluster Kafka em região compatível com Flink;
+- Um Flink Compute Pool na mesma região do cluster;
+- Acesso ao SQL Workspace usado na apresentação.
 
 ---
 
-## 🚀 Passo a passo
+## Passo a passo
 
 ### Passo 1: Criar os recursos no Confluent Cloud
 
@@ -85,21 +85,21 @@ O registro `id=41` do dataset original possui quantidade zero e será rejeitado 
 
 Execute cada consulta de `flink/05_consultas.sql` em uma célula diferente. Registre capturas de tela de:
 
-1. mensagens em `produtos_raw`;
-2. resultados por janela em `produtos_agregados`;
-3. mensagens e motivos em `produtos_invalidos`;
-4. jobs `RUNNING` no painel de statements do Flink;
-5. schemas JSON e Avro no Schema Registry.
+1. Mensagens em `produtos_raw`;
+2. Resultados por janela em `produtos_agregados`;
+3. Mensagens e motivos em `produtos_invalidos`;
+4. Jobs `RUNNING` no painel de statements do Flink;
+5. Schemas JSON e Avro no Schema Registry.
 
 ---
 
 ## Decisões técnicas
 
-- **JSON Schema → Avro:** demonstra a mudança de formato exigida no enunciado usando formatos nativos do Confluent Cloud.
-- **Event Time:** os timestamps sintéticos tornam o exemplo reproduzível, pois o dataset original não contém tempo.
-- **Watermark:** tolera cinco segundos de atraso e determina quando a janela pode ser emitida.
-- **Dead-letter topic:** um erro de qualidade não interrompe o job principal.
-- **Schema Registry:** formaliza o contrato dos eventos e permite que o Flink descubra os tipos.
+- **JSON Schema → Avro:** Demonstra a mudança de formato exigida no enunciado usando formatos nativos do Confluent Cloud.
+- **Event Time:** Os timestamps sintéticos tornam o exemplo reproduzível, pois o dataset original não contém tempo.
+- **Watermark:** Tolera cinco segundos de atraso e determina quando a janela pode ser emitida.
+- **Dead-letter topic:** Um erro de qualidade não interrompe o job principal.
+- **Schema Registry:** Formaliza o contrato dos eventos e permite que o Flink descubra os tipos.
 
 ---
 
