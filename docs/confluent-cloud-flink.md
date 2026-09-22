@@ -23,7 +23,7 @@ O pipeline atende aos bônus do enunciado:
 
 ```text
 Lab 02 - Dataset.json
-         ↓ produtor Python
+         ↓ INSERT Flink SQL
 produtos_raw (Kafka + JSON Schema)
          ↓ Flink SQL
    validação / tipagem
@@ -34,7 +34,7 @@ produtos_invalidos  TUMBLE de 1 minuto
                        (Kafka + Avro)
 ```
 
-O dataset original não possui data de evento. O produtor acrescenta `event_time` em epoch milliseconds, mantendo o arquivo original intacto. O Flink converte esse campo em `TIMESTAMP_LTZ(3)` e aplica Watermark de cinco segundos.
+O dataset original não possui data de evento. O script de carga acrescenta `event_time` em epoch milliseconds, mantendo o arquivo original intacto. O Flink converte esse campo em `TIMESTAMP_LTZ(3)` e aplica Watermark de cinco segundos.
 
 ---
 
@@ -44,12 +44,7 @@ O dataset original não possui data de evento. O produtor acrescenta `event_time
 - um Environment com Schema Registry habilitado;
 - um cluster Kafka em região compatível com Flink;
 - um Flink Compute Pool na mesma região do cluster;
-- Python 3.10 ou superior na máquina que publicará o dataset.
-
-Você precisará de dois pares de credenciais diferentes:
-
-- API key/secret do cluster Kafka;
-- API key/secret do Schema Registry.
+- acesso ao SQL Workspace usado na apresentação.
 
 ---
 
@@ -66,7 +61,7 @@ Você precisará de dois pares de credenciais diferentes:
 
 Abra `flink/00_criar_tabelas.sql`. Copie cada `CREATE TABLE` para uma célula separada e execute na ordem em que aparece.
 
-O primeiro comando cria `produtos_raw` e seu schema JSON. Os outros dois criam tópicos Avro para agregações e registros rejeitados. Aguarde todos os comandos terminarem antes de iniciar o produtor.
+O primeiro comando cria `produtos_raw` e seu schema JSON. Os outros dois criam tópicos Avro para agregações e registros rejeitados. Aguarde todos os comandos terminarem antes de iniciar os jobs e executar a carga SQL.
 
 ### Passo 3: Criar as views de transformação
 
@@ -80,41 +75,19 @@ Execute `flink/02_processar_invalidos.sql` em uma célula e deixe o job em execu
 
 O primeiro job envia erros para a quarentena. O segundo fecha as janelas conforme o Watermark avança e escreve as métricas em `produtos_agregados`.
 
-### Passo 5: Configurar o produtor local
+### Passo 5: Publicar o dataset pelo Flink SQL
 
-Na raiz do projeto:
+Execute `flink/04_carregar_dataset.sql` em uma nova célula. O próprio Flink publicará os 50 registros do Lab 02 no tópico `produtos_raw` usando JSON Schema. A última linha é um registro técnico inválido que apenas avança o Watermark para fechar todas as janelas.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.confluent.example .env
-```
+O registro `id=41` do dataset original possui quantidade zero e será rejeitado pelas regras de qualidade. Isso demonstra a validação usando um dado real do arquivo fornecido.
 
-Preencha `.env` com os endpoints e as credenciais exibidos no Confluent Cloud. Não faça commit desse arquivo.
+### Passo 6: Consultar e registrar evidências
 
-### Passo 6: Publicar o dataset
-
-```bash
-python scripts/produce_to_confluent.py
-```
-
-Para a apresentação ao professor, use a opção abaixo. Além de demonstrar a
-quarentena, o evento inválido posterior faz o Watermark fechar a última janela:
-
-```bash
-python scripts/produce_to_confluent.py --include-invalid
-```
-
-O produtor lê o schema criado pelo Flink no Schema Registry, serializa os 50 produtos como JSON Schema e aguarda a confirmação de entrega do Kafka.
-
-### Passo 7: Consultar e registrar evidências
-
-Execute cada consulta de `flink/04_consultas.sql` em uma célula diferente. Registre capturas de tela de:
+Execute cada consulta de `flink/05_consultas.sql` em uma célula diferente. Registre capturas de tela de:
 
 1. mensagens em `produtos_raw`;
 2. resultados por janela em `produtos_agregados`;
-3. mensagem e motivo em `produtos_invalidos`, caso tenha usado `--include-invalid`;
+3. mensagens e motivos em `produtos_invalidos`;
 4. jobs `RUNNING` no painel de statements do Flink;
 5. schemas JSON e Avro no Schema Registry.
 
@@ -142,4 +115,4 @@ Execute cada consulta de `flink/04_consultas.sql` em uma célula diferente. Regi
 
 ## ✅ Resultado esperado
 
-Ao final, o tópico `produtos_agregados` deverá conter uma linha Avro por janela fechada, com início, fim, contagem de produtos, total de itens e valor do estoque. Se a opção de teste inválido for usada, `produtos_invalidos` deverá receber uma linha com o motivo `preco deve ser positivo`.
+Ao final, o tópico `produtos_agregados` deverá conter uma linha Avro por janela fechada, com início, fim, contagem de produtos, total de itens e valor do estoque. O tópico `produtos_invalidos` receberá o produto `41`, cuja quantidade é zero, e o registro técnico usado para avançar o Watermark.
