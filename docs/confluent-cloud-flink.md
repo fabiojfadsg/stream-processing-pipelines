@@ -87,7 +87,7 @@ Na raiz do projeto:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements-confluent.txt
+pip install -r requirements.txt
 cp .env.confluent.example .env
 ```
 

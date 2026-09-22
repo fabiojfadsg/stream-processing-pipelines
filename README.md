@@ -1,14 +1,14 @@
-# MBA — Pipeline de Processamento de Dados em Streaming
+# MBA — Pipeline de Streaming com Apache Flink e Kafka
 
-Projeto-base para o trabalho de **Stream Processing & Pipelines**. A implementação principal usa **Confluent Cloud, Apache Kafka e Flink SQL** para ingerir produtos em JSON Schema, validar os campos, calcular métricas em janelas de tempo e publicar os resultados em Avro.
+Projeto para o trabalho de **Stream Processing & Pipelines**, implementado exclusivamente com **Confluent Cloud, Apache Kafka e Apache Flink SQL**. O pipeline ingere produtos em JSON Schema, valida os campos, calcula métricas em janelas de tempo e publica os resultados em Avro.
 
-> Este repositório entrega a estrutura, os exemplos de configuração e o roteiro de execução. Os diretórios de saída, checkpoints e dados simulados são gerados localmente e não fazem parte da entrega.
+> O dataset original do Lab 02 permanece inalterado. O produtor acrescenta apenas o timestamp necessário ao processamento temporal antes de publicar cada evento no Kafka.
 
 ## Objetivo
 
-Construir um pipeline em que a fonte Kafka usa JSON Schema e o destino Kafka usa Avro, incluindo validação, quarentena, agregação e janela temporal no Flink SQL. A implementação Spark com saída Parquet permanece no repositório como alternativa local.
+Construir um pipeline em que a fonte Kafka usa JSON Schema e o destino Kafka usa Avro, incluindo validação, quarentena, agregação e janela temporal no Flink SQL.
 
-## Arquitetura principal — Confluent Cloud
+## Arquitetura
 
 ```text
 Dataset JSON → produtor Python → Kafka: produtos_raw (JSON Schema)
@@ -25,17 +25,14 @@ Dataset JSON → produtor Python → Kafka: produtos_raw (JSON Schema)
 ```text
 .
 ├── data/
-│   ├── reference/       # dataset original do Lab 02
-│   ├── input/           # arquivos JSON que simulam a chegada do stream
-│   ├── output/parquet/  # sink Parquet (ignorado pelo Git)
-│   └── checkpoints/     # estado da query (ignorado pelo Git)
+│   └── reference/       # dataset original do Lab 02
 ├── docs/
-│   └── laboratorio.md   # documentação guiada da entrega
+│   └── confluent-cloud-flink.md
 ├── flink/               # scripts Flink SQL para o Confluent Cloud
-├── infrastructure/      # base Docker da alternativa Spark
-├── scripts/             # produtores e geradores de dados
-├── src/                 # alternativa local em Spark
-└── tests/               # testes futuros
+├── scripts/
+│   └── produce_to_confluent.py
+├── .env.confluent.example
+└── requirements.txt
 ```
 
 ## Executar no Confluent Cloud
@@ -43,11 +40,11 @@ Dataset JSON → produtor Python → Kafka: produtos_raw (JSON Schema)
 1. Crie um ambiente, cluster Kafka, Schema Registry e Compute Pool do Flink.
 2. No SQL Workspace, execute os arquivos de `flink/` na ordem numérica até `03`.
 3. Copie `.env.confluent.example` para `.env` e informe as credenciais.
-4. Instale o cliente: `pip install -r requirements-confluent.txt`.
+4. Instale o cliente: `pip install -r requirements.txt`.
 5. Publique o dataset: `python scripts/produce_to_confluent.py`.
 6. Execute as consultas de `flink/04_consultas.sql`.
 
-O roteiro completo, incluindo as telas do Confluent Cloud e a ordem exata das células SQL, está em [docs/confluent-cloud-flink.md](docs/confluent-cloud-flink.md). A versão Spark anterior continua disponível como alternativa local em [docs/laboratorio.md](docs/laboratorio.md).
+O roteiro completo, incluindo as telas do Confluent Cloud e a ordem exata das células SQL, está em [docs/confluent-cloud-flink.md](docs/confluent-cloud-flink.md).
 
 ## Dataset
 
