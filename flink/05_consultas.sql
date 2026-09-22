@@ -1,9 +1,9 @@
 -- Execute cada SELECT em uma célula separada para obter evidências do trabalho.
 SELECT * FROM produtos_raw;
 
-SELECT *
-FROM produtos_agregados
-ORDER BY janela_inicio;
+-- Não usamos ORDER BY global: em streaming, a primeira ordenação precisa ser
+-- um atributo temporal com Watermark, e a tabela de saída já está materializada.
+SELECT * FROM produtos_agregados;
 
 SELECT * FROM produtos_invalidos;
 
