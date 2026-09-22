@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Construir um pipeline de streaming gerenciado que publique o dataset de produtos do Lab 02 em Kafka, valide os eventos com Flink SQL, calcule métricas por janela temporal e escreva o resultado em outro tópico e em outro formato.
 
@@ -19,7 +19,7 @@ O pipeline atende aos bônus do enunciado:
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```text
 Lab 02 - Dataset.json
@@ -38,7 +38,7 @@ O dataset original não possui data de evento. O script de carga acrescenta `eve
 
 ---
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 - conta no Confluent Cloud;
 - um Environment com Schema Registry habilitado;
@@ -93,7 +93,7 @@ Execute cada consulta de `flink/05_consultas.sql` em uma célula diferente. Regi
 
 ---
 
-## 🧠 Decisões técnicas
+## Decisões técnicas
 
 - **JSON Schema → Avro:** demonstra a mudança de formato exigida no enunciado usando formatos nativos do Confluent Cloud.
 - **Event Time:** os timestamps sintéticos tornam o exemplo reproduzível, pois o dataset original não contém tempo.
@@ -103,7 +103,7 @@ Execute cada consulta de `flink/05_consultas.sql` em uma célula diferente. Regi
 
 ---
 
-## 🧹 Cleanup
+## Cleanup
 
 1. Interrompa os statements `INSERT INTO` no painel do Flink.
 2. Execute `flink/99_cleanup.sql`, uma instrução por célula.
@@ -113,6 +113,6 @@ Execute cada consulta de `flink/05_consultas.sql` em uma célula diferente. Regi
 
 ---
 
-## ✅ Resultado esperado
+## Resultado esperado
 
 Ao final, o tópico `produtos_agregados` deverá conter uma linha Avro por janela fechada, com início, fim, contagem de produtos, total de itens e valor do estoque. O tópico `produtos_invalidos` receberá o produto `41`, cuja quantidade é zero, e o registro técnico usado para avançar o Watermark.
